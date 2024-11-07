@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'models/region_area.dart';
 
 class SizeController {
@@ -55,11 +56,19 @@ class SizeController {
       newHeight = newWidth * containerSize.width / containerSize.height;
       newContainerSize = Size(newWidth, newHeight);
       return newContainerSize.width / mapSize.width;
-    }
-
-    if (containerSize.aspectRatio < 1 && mapSize.aspectRatio < 1) {
+    } else if (containerSize.aspectRatio < 1 && mapSize.aspectRatio < 1) {
       newHeight = containerSize.height;
       newWidth = newHeight * (mapSize.aspectRatio);
+      newContainerSize = Size(newWidth, newHeight);
+      return newContainerSize.height / mapSize.height;
+    } else if (containerSize.aspectRatio >= 1 && mapSize.aspectRatio >= 1) {
+      newWidth = containerSize.width;
+      newHeight = newWidth / mapSize.aspectRatio;
+      newContainerSize = Size(newWidth, newHeight);
+      return newContainerSize.width / mapSize.width;
+    } else if (containerSize.aspectRatio >= 1 && mapSize.aspectRatio < 1) {
+      newHeight = containerSize.height;
+      newWidth = newHeight * mapSize.aspectRatio;
       newContainerSize = Size(newWidth, newHeight);
       return newContainerSize.height / mapSize.height;
     }

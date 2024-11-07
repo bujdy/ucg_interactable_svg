@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:svg_path_parser/svg_path_parser.dart';
 import 'package:xml/xml.dart';
 
-import './size_controller.dart';
 import './models/region.dart';
+import './size_controller.dart';
 
 class Parser {
   static Parser? _instance;

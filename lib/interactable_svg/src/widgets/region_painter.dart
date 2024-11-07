@@ -40,7 +40,7 @@ class RegionPainter extends CustomPainter {
 
     canvas.scale(_scale);
 
-    if (selectedRegion.contains(region) && (int.tryParse(region.id) ?? 0) != 0) {
+    if (selectedRegion.contains(region)) {
       canvas.drawPath(region.path, selectedPen);
     } else {
       canvas.drawPath(region.path, pen);

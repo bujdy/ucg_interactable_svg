@@ -4,7 +4,7 @@ version: 1.0.25
 homepage: https://github.com/ugurgoker/ucg_interactable_svg
 
 environment:
-  sdk: ^3.5.1
+  sdk: ^3.2.3
 
 dependencies:
   flutter:

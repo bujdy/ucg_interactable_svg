@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import './region_painter.dart';
+
 import '../models/region.dart';
 import '../parser.dart';
 import '../size_controller.dart';
+import './region_painter.dart';
 
 class UcgInteractableSvg extends StatefulWidget {
   final double? width;
@@ -13,7 +14,10 @@ class UcgInteractableSvg extends StatefulWidget {
   final bool isMultiSelectable;
   final Color? Function(int partId, Color? defaultColor)? unSelectableColor;
   final String? Function(int partId, String? title)? unSelectableText;
-  final bool isActivePadding;
+
+  final BoxFit fit;
+  final Alignment alignment;
+  final Clip clipBehavior;
 
   const UcgInteractableSvg({
     Key? key,
@@ -25,7 +29,9 @@ class UcgInteractableSvg extends StatefulWidget {
     this.isMultiSelectable = false,
     this.unSelectableColor,
     this.unSelectableText,
-    this.isActivePadding = true,
+    this.fit = BoxFit.contain,
+    this.alignment = Alignment.center,
+    this.clipBehavior = Clip.hardEdge,
   }) : super(key: key);
 
   @override
@@ -67,41 +73,38 @@ class UcgInteractableSvgState extends State<UcgInteractableSvg> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final mapSize = _sizeController?.mapSize;
-    return Row(
-      children: widget.isActivePadding
-          ? [
-              Container(
-                  width: mapSize == null
-                      ? 0
-                      : mapSize.width >= size.width
-                          ? 20
-                          : (size.width - mapSize.width) / 2.5),
-              Expanded(
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    for (var region in _regionList) _buildStackItem(region),
-                  ],
-                ),
-              ),
-              Container(
-                  width: mapSize == null
-                      ? 0
-                      : mapSize.width >= size.width
-                          ? 20
-                          : (size.width - mapSize.width) / 2.5),
-            ]
-          : [
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  for (var region in _regionList) _buildStackItem(region),
-                ],
-              ),
-            ],
-    );
+    return LayoutBuilder(builder: (context, contstraints) {
+      final Rect viewport = Offset.zero & Size(widget.width ?? 0, widget.height ?? 0);
+      double? width = widget.width;
+      double? height = widget.height;
+      if (width == null && height == null) {
+        width = viewport.width;
+        height = viewport.height;
+      } else if (height != null) {
+        width = height / viewport.height * viewport.width;
+      } else if (width != null) {
+        height = width / viewport.width * viewport.height;
+      }
+
+      return SizedBox(
+        width: width,
+        height: height,
+        child: FittedBox(
+          fit: widget.fit,
+          alignment: widget.alignment,
+          clipBehavior: widget.clipBehavior,
+          child: SizedBox.fromSize(
+            size: viewport.size,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                for (var region in _regionList) _buildStackItem(region),
+              ],
+            ),
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildStackItem(Region region) {
